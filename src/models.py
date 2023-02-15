@@ -8,26 +8,48 @@ from eralchemy2 import render_er
 
 Base = declarative_base()
 
-class Person(Base):
-    __tablename__ = 'person'
-    # Here we define columns for the table person
-    # Notice that each column is also a normal Python instance attribute.
-    id = Column(Integer, primary_key=True)
-    name = Column(String(250), nullable=False)
+class User(Base):
+    __tablename__ = 'user'
+    user_id = Column(Integer, primary_key=True)
+    username = Column(String(80), nullable=False, unique=True)
+    firstname = Column(String(80), nullable=False)
+    lastname = Column(String(80), nullable=False)
+    email = Column(String(250), nullable=False, unique=True)
+    created = Column(String(250))
+    
 
-class Address(Base):
-    __tablename__ = 'address'
-    # Here we define columns for the table address.
-    # Notice that each column is also a normal Python instance attribute.
-    id = Column(Integer, primary_key=True)
-    street_name = Column(String(250))
-    street_number = Column(String(250))
-    post_code = Column(String(250), nullable=False)
-    person_id = Column(Integer, ForeignKey('person.id'))
-    person = relationship(Person)
+class Post(Base):
+    __tablename__ = 'post'
+    post_id = Column(Integer, primary_key=True)
+    user_id = Column(Integer, ForeignKey('user.user_id'))
+    comment = Column(String(250),ForeignKey('user.user_id'))
+    created = Column(String(250))
+    total_likes = Column(Integer)
 
+class Comentarios(Base):
+    __tablename__ = 'comentarios'
+    comment_id = Column(Integer, primary_key=True)
+    author_comment_id = Column(Integer, ForeignKey('user.user_id'))
+    text = Column(String(250))
+    post_id = Column(Integer, ForeignKey('post.post_id'))
+
+class Media(Base):
+    __tablename__ = 'media'
+    media_id = Column(Integer, primary_key=True)
+    tipo = Column(String(250))
+    url = Column(String(250))
+    post_id = Column(Integer, ForeignKey('post.post_id'))
+
+
+class Likes(Base):
+    __tablename__ = 'likes'
+    like_id = Column(Integer, primary_key=True)
+    post_id = Column(Integer, ForeignKey('post.post_id'))
+    user_like_id = Column(Integer, ForeignKey('user.user_id'))
+   
     def to_dict(self):
         return {}
+
 
 ## Draw from SQLAlchemy base
 try:
